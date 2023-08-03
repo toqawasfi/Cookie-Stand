@@ -1,118 +1,188 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
-
+import Head from 'next/head';
+import Header from '../components/Header';
+import CreateForm from '../components/CreateForm';
+import { hours } from '../data.js';
+import { useState } from 'react';
+import ReportTable from '../components/ReportTable';
+import { useAuth } from '../contexts/auth';
+import useResource from '../hooks/useResource';
+const { login, user, logout } = useAuth();
 export default function Home() {
+
+  const [locations, setLocations] = useState([])
+  const [ararys, setArrays] = useState([])
+  const [summation, setSummation] = useState([])
+  const [totalSummation, setTotalSummation] = useState(0)
+  const [validatinLogin, setValidatinLogin] = useState({})
+  const [virticalSummation, setVirticalSummation] = useState([])
+  const { login, user, logout } = useAuth();
+  const { resource, loading, createResource, deleteResource,fetchResource } = useResource();
+
+
+  function submitHandler(event) {
+    event.preventDefault();
+    
+    const randomArray = [];
+    const matrixArray = []
+    let sum = 0
+    let virtical = 0
+    let k = 0
+    let colArray = []
+    for (let i = 0; i < 14; i++) {
+      const randomNum = parseInt(Math.floor(Math.random() * (parseInt(event.target.maximum.value) - parseInt(event.target.minimum.value) + 1)) + parseInt(event.target.minimum.value));
+
+      randomArray.push(randomNum);
+      console.log(typeof randomNum);
+      sum = sum + randomNum
+    }
+    setTotalSummation(totalSummation + sum)
+    matrixArray.push(randomArray)
+
+
+
+
+    
+    const locationObj = {
+      location: event.target.location.value,
+      minimum_customers_per_hour: event.target.min.value,
+      maximum_customers_per_hour: event.target.max.value,
+      average_cookies_per_sale: event.target.avg.value
+    }
+
+    setLocations([...locations, locationObj])
+    setArrays([...ararys, randomArray])
+    setSummation([...summation, sum])
+    // setVirticalSummation([12,1,4,5])
+    // console.log(ararys[2][2]);
+    createResource(locations)
+
+    // for (let i = 0; i < 14; i++) {
+
+    //   for (let j = 0; j < ararys.length; i++) {
+    //     virtical += ararys[j][k]
+    //     console.log(ararys[j][k])
+    //   }
+    //   colArray.push(virtical)
+    //   k++
+    //   virtical = 0
+
+    // }
+
+  }
+
+  function loginHandler(event){
+    event.preventDefault();
+    setValidatinLogin({
+      username: event.target.username.value,
+      password: event.target.password.value,
+    })
+  }
+
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <>
+      <Head>
+        <title>Cookie Stand Admin</title>
+      </Head>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      {/* Header */}
+      <Header />
+      <main className='flex flex-col min-h-screen items-center py-4 space-y-8'>                                                                                                                                                                                                                                         
+        {/* form */}
+        <setValidatinLogin loginHandler={loginHandler}/>
+        {user.username == validatinLogin.username  ? (
+          <>
+            <button className="p-2 text-white bg-gray-500 rounded" onClick={() => logout()}>Logout</button>
+            <h2>Welcome {user.username}</h2>
+            <CreateForm1 onCreate={createResource} />
+            <ReportTable locations={locations} hours={hours} ararys={ararys} summation={summation} totalSummation={totalSummation} virticalSummation={virticalSummation} data={resource} loading={loading} onDelete={deleteResource} />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+            {/* <StandList data={resource} loading={loading} onDelete={deleteResource} /> */}
+          </>
+        ) : (
+          <>
+            <h1>Toqa Bany Yassen
+            </h1>
+            <button className="p-2 text-white bg-gray-500 rounded" onClick={() => login("root", "123")}>Login</button>
+            <h2>Need to log in</h2>
+          </>
+        )}
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
+        <CreateForm handler={submitHandler} hours={hours} />
+        
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      </main>
+      <footer className="p-4 mt-auto bg-lime-900 text-gray-50 ">
+        &copy; 2023
+      </footer>
+
+    </>
   )
+}
+
+
+
+
+
+
+function StandList({ data, loading, onDelete }) {
+
+  if (loading) return <p>Loading ...</p>
+  return (
+    <>
+      <h3 className="text-xl">Cookies Stand List</h3>
+      {data.map(item => (
+        <li key={item.id}>
+          <span>{item.location}</span>
+          <span onClick={() => onDelete(item.id)}>[X]</span>
+        </li>
+      ))}
+
+    </>
+  )
+}
+
+
+function CreateForm1({ onCreate }) {
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const standInfo = {
+      location: event.target.location.value,
+      minimum_customers_per_hour: event.target.min.value,
+      maximum_customers_per_hour: event.target.max.value,
+      average_cookies_per_sale: event.target.avg.value
+    }
+    onCreate(standInfo)
+  }
+  return (
+    <>
+      <h3 className="text-xl"> Create new item</h3>
+      <form onSubmit={handleSubmit}>
+        <input className="border border-black" name="location" placeholder='Location' />
+        <input className="border border-black" name="min" placeholder='min' />
+        <input className="border border-black" name="max" placeholder='max' />
+        <input className="border border-black" name="avg" placeholder='avg' />
+        <button className="p-2 bg-gray-500 text-white">Create</button>
+      </form>
+    </>
+  )
+}
+
+
+function login_validation(props) {
+
+  return (
+    <>
+      <h3 className="text-xl"> Create new item</h3>
+      <form onSubmit={props.loginHandler}>
+        <input className="border border-black" name="username" placeholder='username' />
+        <input className="border border-black" type='password' name="password" placeholder='password' />
+        
+        <button className="p-2 bg-gray-500 text-white">Log in</button>
+      </form>
+    </>
+  )
+  
 }
